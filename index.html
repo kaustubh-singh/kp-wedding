@@ -134,7 +134,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
           <div class="chips" data-name="food"><button type="button" class="chip" data-v="Veg">Veg</button><button type="button" class="chip" data-v="Non-veg">Non-veg</button></div></div>
         <div class="q travel" id="qTravel">
           <p class="travel-title">Stay &amp; travel for the wedding</p>
-          <p class="qh" style="margin:-6px 0 16px">We’ll arrange your stay in Anand for the wedding, with everyone arriving on Wednesday, 9 December. Just tell us how you’re coming. (Stay is only for the wedding in Anand, not the reception in Navi Mumbai.)</p>
           <label class="q" style="display:block"><span class="ql">Coming from which city? <span class="qh">optional</span></span><input type="text" id="from" placeholder="e.g. Mumbai, Bengaluru"></label>
           <div class="q"><span class="ql">Travelling by</span>
             <div class="chips" data-name="mode"><button type="button" class="chip" data-v="Flight">Flight</button><button type="button" class="chip" data-v="Train">Train</button><button type="button" class="chip" data-v="Car">Car</button></div></div>
@@ -232,7 +231,7 @@ function renderForm(){
   $('#minus').onclick=()=>{ state.adults=Math.max(1,state.adults-1); sync(); };
   $('#plus').onclick=()=>{ state.adults=Math.min(G.max,state.adults+1); sync(); };
   $('#kminus').onclick=()=>{ state.kids=Math.max(0,state.kids-1); sync(); };
-  $('#kplus').onclick=()=>{ state.kids=Math.min(10,state.kids+1); sync(); };
+  $('#kplus').onclick=()=>{ state.kids=Math.min(2,state.kids+1); sync(); };
   document.querySelectorAll('.chips[data-name]').forEach(c=>{ if(c.id==='pointChips'||c.id==='leavePointChips') return; c.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
     const k=c.dataset.name; state[k] = state[k]===b.dataset.v ? '' : b.dataset.v; if(k==='mode') renderPoints(); sync(); })); });
   ['from','arrTime','travelNo','leaveTime','message'].forEach(id=>$('#'+id).addEventListener('input',e=>{ state[id]=e.target.value; }));
@@ -252,7 +251,7 @@ function sync(){
   $('#qNo').classList.toggle('hide',!POINTS[state.mode]);
   $('#qLeavePoint').classList.toggle('hide',!POINTS[state.mode]);
   $('#count').textContent=state.adults; $('#minus').disabled=state.adults<=1; $('#plus').disabled=state.adults>=G.max;
-  $('#kcount').textContent=state.kids; $('#kminus').disabled=state.kids<=0; $('#kplus').disabled=state.kids>=10;
+  $('#kcount').textContent=state.kids; $('#kminus').disabled=state.kids<=0; $('#kplus').disabled=state.kids>=2;
 }
 
 function submit(ev){
@@ -297,7 +296,7 @@ function showDone(r){
 
 function load(r){
   state.events=Object.assign({},r.events); E.forEach(x=>{ if(G.events.indexOf(x.key)<0) delete state.events[x.key]; });
-  state.adults=Math.max(1,Math.min(G.max,parseInt(r.adults,10)||1)); state.kids=Math.max(0,parseInt(r.kids,10)||0);
+  state.adults=Math.max(1,Math.min(G.max,parseInt(r.adults,10)||1)); state.kids=Math.max(0,Math.min(2,parseInt(r.kids,10)||0));
   ['food','mode','point','leaveDate','leavePoint'].forEach(k=>state[k]=r[k]||'');
   ['from','travelNo','message'].forEach(k=>{ state[k]=r[k]||''; $('#'+k).value=state[k]; });
   ['arrTime','leaveTime'].forEach(k=>{ state[k]=/^\d\d:\d\d$/.test(r[k])?r[k]:''; $('#'+k).value=state[k]; });
