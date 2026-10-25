@@ -101,10 +101,11 @@ const API = "https://script.google.com/macros/s/AKfycbz2ryPgkQuCHZGXfLdsvS6-JCMX
 window.google = { script: {} };
 Object.defineProperty(window.google.script, 'run', { get() {
   let ok = () => {}, bad = () => {};
-  const o = { withSuccessHandler(f) { ok = f; return o; }, withFailureHandler(f) { bad = f; return o; } };
-  return new Proxy(o, { get(t, k) { if (k in t) return t[k]; return (...args) =>
+  const o = { withSuccessHandler(f) { ok = f; return px; }, withFailureHandler(f) { bad = f; return px; } };
+  const px = new Proxy(o, { get(t, k) { if (k in t) return t[k]; return (...args) =>
     fetch(API, { method: 'POST', credentials: 'omit', redirect: 'follow', body: JSON.stringify({ fn: k, args }) })
       .then(r => r.json()).then(j => j.ok ? ok(j.result) : bad(new Error(j.error))).catch(e => bad(e)); } });
+  return px;
 } });
 function icsData(x, P) {
   const p = P[x.place], c = x.cal, esc = s => String(s).replace(/([,;\\])/g, '\\$1');
